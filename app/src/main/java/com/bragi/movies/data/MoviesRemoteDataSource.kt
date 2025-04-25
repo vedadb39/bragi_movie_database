@@ -4,20 +4,36 @@ import com.bragi.core.data.get
 import com.bragi.core.domain.DataError
 import com.bragi.core.domain.Result
 import com.bragi.core.domain.map
+import com.bragi.movies.data.model.MovieApiModel
+import com.bragi.movies.data.model.MovieDetailsApiModel
 import com.bragi.movies.data.model.MovieResponseApiModel
-import com.bragi.movies.domain.model.Movie
+import com.bragi.movies.domain.model.GenreState
+import com.bragi.movies.domain.model.GenreState.All
+import com.bragi.movies.domain.model.GenreState.Selected
 import io.ktor.client.HttpClient
 
 class MoviesRemoteDataSource(
     private val httpClient: HttpClient
 ) : MoviesRemoteSource {
-    override suspend fun getMovies(): Result<List<Movie>, DataError.Network> {
+    override suspend fun getMovies(genreState: GenreState): Result<Collection<MovieApiModel>, DataError.Network> {
         return httpClient.get<MovieResponseApiModel>(
-            route = "movies"
+            route = "discover/movie",
+            queryParameters = queryParameters(genreState)
         ).map { response ->
-            response.results.map { movieApiModel ->
-                movieApiModel.toMovie()
-            }
+            response.results
         }
+    }
+
+    override suspend fun getMovieDetails(movieId: Int): Result<MovieDetailsApiModel, DataError.Network> {
+        return httpClient.get<MovieDetailsApiModel>(
+            route = "movie/$movieId"
+        )
+    }
+
+    private fun queryParameters(genreState: GenreState) = when (genreState) {
+        All -> emptyMap()
+        is Selected -> mapOf(
+            "with_genres" to genreState.genre.id.toString()
+        )
     }
 }
