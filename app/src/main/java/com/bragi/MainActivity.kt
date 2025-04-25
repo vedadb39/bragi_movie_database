@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.bragi.core.presentation.navigation.NavigationRoot
 import com.bragi.ui.theme.BragiMoviesDatabaseTheme
+import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,9 +14,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BragiMoviesDatabaseTheme {
-                NavigationRoot()
+                KoinAndroidContext {
+                    NavigationRoot()
+                }
             }
         }
     }
 }
-

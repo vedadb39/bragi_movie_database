@@ -2,6 +2,8 @@ package com.bragi.core.data
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -15,6 +17,9 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import timber.log.Timber
+
+private const val MAX_NUMBER_OF_RETRIES = 3
+private const val RETRY_INTERVAL_MS = 30_000L
 
 object HttpClientFactory {
     fun build(): HttpClient {
@@ -48,6 +53,14 @@ object HttpClientFactory {
                     }
                 }
             }
+            install(HttpTimeout) {
+                requestTimeoutMillis = RETRY_INTERVAL_MS
+                connectTimeoutMillis = RETRY_INTERVAL_MS
+            }
+            install(HttpRequestRetry) {
+                retryOnException(MAX_NUMBER_OF_RETRIES, true)
+           }
+
         }
     }
 }

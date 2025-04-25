@@ -7,4 +7,5 @@ import com.bragi.movies.domain.model.Movie
 
 interface MoviesRepository {
     suspend fun getMovies(genreState: GenreState): Result<List<Movie>, DataError.Network>
+    suspend fun getGenres(): Result<List<GenreState>, DataError.Network>
 }

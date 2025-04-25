@@ -4,10 +4,14 @@ import com.bragi.core.domain.DataError
 import com.bragi.core.domain.Result
 import com.bragi.core.domain.Result.Error
 import com.bragi.core.domain.Result.Success
+import com.bragi.core.domain.map
 import com.bragi.movies.data.model.MovieApiModel
 import com.bragi.movies.data.model.MovieDetailsApiModel
 import com.bragi.movies.domain.MoviesRepository
+import com.bragi.movies.domain.model.Genre
 import com.bragi.movies.domain.model.GenreState
+import com.bragi.movies.domain.model.GenreState.All
+import com.bragi.movies.domain.model.GenreState.Selected
 import com.bragi.movies.domain.model.Movie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +44,14 @@ class MoviesDataRepository(
             is Error -> Error(result.error)
         }
     }
+
+    override suspend fun getGenres(): Result<List<GenreState>, DataError.Network> {
+        return moviesRemoteSource.getGenres().map { genres ->
+            listOf(All) + genres.map { it.toState() }
+        }
+    }
+
+    private fun Genre.toState() = Selected(id, name)
 
     private fun MovieApiModel.toMovie(details: MovieDetailsApiModel) = Movie(
         id = id,

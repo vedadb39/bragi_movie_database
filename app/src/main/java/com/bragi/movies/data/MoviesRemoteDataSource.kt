@@ -4,9 +4,12 @@ import com.bragi.core.data.get
 import com.bragi.core.domain.DataError
 import com.bragi.core.domain.Result
 import com.bragi.core.domain.map
+import com.bragi.movies.data.model.GenreApiModel
+import com.bragi.movies.data.model.GenreResponseApiModel
 import com.bragi.movies.data.model.MovieApiModel
 import com.bragi.movies.data.model.MovieDetailsApiModel
 import com.bragi.movies.data.model.MovieResponseApiModel
+import com.bragi.movies.domain.model.Genre
 import com.bragi.movies.domain.model.GenreState
 import com.bragi.movies.domain.model.GenreState.All
 import com.bragi.movies.domain.model.GenreState.Selected
@@ -30,10 +33,25 @@ class MoviesRemoteDataSource(
         )
     }
 
+    override suspend fun getGenres(): Result<List<Genre>, DataError.Network> {
+        return httpClient.get<GenreResponseApiModel>(
+            route = "genre/movie/list"
+        ).map { response ->
+            response.genres.map { genreApiModel ->
+                genreApiModel.toGenre()
+            }
+        }
+    }
+
     private fun queryParameters(genreState: GenreState) = when (genreState) {
         All -> emptyMap()
         is Selected -> mapOf(
-            "with_genres" to genreState.genre.id.toString()
+            "with_genres" to genreState.id.toString()
         )
     }
+
+    private fun GenreApiModel.toGenre() = Genre(
+        id = id,
+        name = name
+    )
 }
