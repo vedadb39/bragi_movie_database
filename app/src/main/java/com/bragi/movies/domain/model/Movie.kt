@@ -4,6 +4,7 @@ data class Movie(
     val id: Int,
     val title: String,
     val rating: Float,
-    val revenue: Long?,
-    val budget: Long?
+    val revenue: Long,
+    val budget: Long,
+    val posterUrl: String
 )
