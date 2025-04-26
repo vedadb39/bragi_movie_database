@@ -24,28 +24,37 @@ class MoviesDataRepository(
 ) : MoviesRepository {
 
     override suspend fun getMovies(genre: Genre): Result<List<Movie>, DataError.Network> {
-        return when (val result = moviesRemoteSource.getMovies(genre)) {
-            is Success -> withContext(Dispatchers.IO) {
-                val movieDetailsDeferred = result.data.map { movie ->
-                    async {
-                        moviesRemoteSource.getMovieDetails(movieId = movie.id)
+        return try {
+            when (val result = moviesRemoteSource.getMovies(genre)) {
+                is Success -> withContext(Dispatchers.IO) {
+                    val movieDetailsDeferred = result.data.map { movie ->
+                        async {
+                            moviesRemoteSource.getMovieDetails(movieId = movie.id)
+                        }
                     }
-                }
-                val movieDetails = movieDetailsDeferred.awaitAll().map { detailResult ->
-                    if (detailResult is Success) detailResult.data else MovieDetailsApiModel.emptyData
+                    val movieDetails = movieDetailsDeferred.awaitAll().map { detailResult ->
+                        if (detailResult is Success) detailResult.data else MovieDetailsApiModel.emptyData
+                    }
+
+                    val movies =
+                        mapMoviesWithDetails(movies = result.data, movieDetails = movieDetails)
+                    Success(movies)
                 }
 
-                val movies = mapMoviesWithDetails(movies = result.data, movieDetails = movieDetails)
-                Success(movies)
+                is Error -> Error(result.error)
             }
-
-            is Error -> Error(result.error)
+        } catch (e: Exception) {
+            Error(DataError.Network.UNKNOWN)
         }
     }
 
     override suspend fun getGenres(): Result<List<Genre>, DataError.Network> {
-        return moviesRemoteSource.getGenres().map { genres ->
-            listOf(All) + genres.map { it.toGenre() }
+        return try {
+            moviesRemoteSource.getGenres().map { genres ->
+                listOf(All) + genres.map { it.toGenre() }
+            }
+        } catch (e: Exception) {
+            Error(DataError.Network.UNKNOWN)
         }
     }
 
@@ -65,7 +74,7 @@ class MoviesDataRepository(
     private fun MovieApiModel.toMovie(details: MovieDetailsApiModel) = Movie(
         id = id,
         title = original_title,
-        posterUrl = posterImageUrlResolver.resolve(poster_path),
+        posterImage = posterImageUrlResolver.resolve(poster_path),
         rating = details.vote_average,
         revenue = details.revenue,
         budget = details.budget

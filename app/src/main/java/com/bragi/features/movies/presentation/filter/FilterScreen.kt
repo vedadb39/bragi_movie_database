@@ -4,14 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +24,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bragi.R
 import com.bragi.features.movies.presentation.model.GenreUi
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun FilterScreen(
-    viewModel: FiltersViewModel = koinViewModel(),
+    selectedGenre: GenreUi,
+    viewModel: FiltersViewModel = koinViewModel(parameters = { parametersOf(selectedGenre) }),
     onGenreClicked: (GenreUi) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,6 +51,7 @@ fun Content(uiState: FiltersUiState, onGenreClicked: (GenreUi) -> Unit) {
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp),
                 genres = uiState.genres,
+                selectedGenre = uiState.selectedGenre,
                 onGenreClicked = onGenreClicked
             )
         }
@@ -88,13 +90,21 @@ private fun Error() {
 private fun Genres(
     modifier: Modifier,
     genres: List<GenreUi>,
+    selectedGenre: GenreUi,
     onGenreClicked: (GenreUi) -> Unit
 ) {
-    LazyColumn(
+    FlowRow(
         modifier = modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Center
     ) {
-        items(genres) { genre ->
-            GenreItem(genre, onGenreClicked = { onGenreClicked(it) })
+        repeat(genres.size) { index ->
+            GenreItem(
+                genre = genres[index],
+                selectedGenre = selectedGenre,
+                onGenreClicked = { onGenreClicked(it) })
         }
     }
 }
@@ -102,13 +112,21 @@ private fun Genres(
 @Composable
 private fun GenreItem(
     genre: GenreUi,
+    selectedGenre: GenreUi,
     onGenreClicked: (GenreUi) -> Unit = {}
 ) {
-    Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { onGenreClicked(genre) }
-    ) {
-        Text(genre.name)
+    if (selectedGenre == genre) {
+        Button(
+            onClick = { onGenreClicked(genre) }
+        ) {
+            Text(genre.name)
+        }
+    } else {
+        OutlinedButton(
+            onClick = { onGenreClicked(genre) }
+        ) {
+            Text(genre.name)
+        }
     }
 }
 
@@ -120,6 +138,8 @@ fun FilterScreenPreview() {
             genres = listOf(
                 GenreUi.All,
                 GenreUi.Individual(1, "Action")
-            )
-        ), onGenreClicked = {})
+            ),
+            selectedGenre = GenreUi.All
+        ),
+        onGenreClicked = {})
 }

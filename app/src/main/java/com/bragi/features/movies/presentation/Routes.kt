@@ -9,5 +9,5 @@ sealed interface Routes {
     data class Movies(val genre: GenreUi) : Routes
 
     @Serializable
-    data object Filter : Routes
+    data class Filter(val genre: GenreUi) : Routes
 }

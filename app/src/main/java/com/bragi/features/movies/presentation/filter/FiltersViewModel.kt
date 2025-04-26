@@ -16,17 +16,18 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FiltersViewModel(
+    selectedGenre: GenreUi,
     private val moviesRepository: MoviesRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(FiltersUiState())
+    private val _uiState = MutableStateFlow(FiltersUiState(selectedGenre = selectedGenre))
     val uiState: StateFlow<FiltersUiState> = _uiState
         .onStart {
             fetchGenres()
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            FiltersUiState()
+            FiltersUiState(selectedGenre = selectedGenre)
         )
 
     private fun fetchGenres() {

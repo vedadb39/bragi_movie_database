@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class MovieApiModel(
     val id: Int,
     val original_title: String,
-    val poster_path: String
+    val poster_path: String?
 )

@@ -30,14 +30,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.bragi.R
 import com.bragi.features.movies.domain.model.Movie
+import com.bragi.features.movies.domain.model.PosterImage
 import com.bragi.features.movies.presentation.model.GenreUi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MoviesScreen(
-    genreUi: GenreUi,
-    viewModel: MoviesViewModel = koinViewModel(parameters = { parametersOf(genreUi) }),
+    selectedGenre: GenreUi,
+    viewModel: MoviesViewModel = koinViewModel(parameters = { parametersOf(selectedGenre) }),
     onFilterClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -101,7 +102,7 @@ private fun Error() {
 private fun Movies(modifier: Modifier, movies: List<Movie>) {
     LazyVerticalGrid(
         modifier = modifier,
-        columns = GridCells.Fixed(3)
+        columns = GridCells.Fixed(2)
     ) {
         // Pagination????
         items(movies) { movie ->
@@ -112,12 +113,24 @@ private fun Movies(modifier: Modifier, movies: List<Movie>) {
 
 @Composable
 private fun MovieItem(movie: Movie) {
-    Column {
-        AsyncImage(
-            model = movie.posterUrl,
-            contentDescription = null,
-            placeholder = painterResource(R.drawable.movie_placeholder)
-        )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        when (movie.posterImage) {
+            PosterImage.Unavailable -> {
+                Image(
+                    painter = painterResource(id = R.drawable.movie_placeholder),
+                    contentDescription = null
+                )
+            }
+
+            is PosterImage.Url -> {
+                AsyncImage(
+                    model = movie.posterImage.url,
+                    contentDescription = null,
+                    placeholder = painterResource(R.drawable.movie_placeholder)
+                )
+            }
+        }
+
         Text(text = movie.title)
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Rating: ${movie.rating}")
@@ -150,7 +163,7 @@ fun MoviesScreenPreview() {
                 Movie(
                     id = 1,
                     title = "Movie 1",
-                    posterUrl = "",
+                    posterImage = PosterImage.Url(url = ""),
                     rating = 5.0F,
                     revenue = 1000000,
                     budget = 500000

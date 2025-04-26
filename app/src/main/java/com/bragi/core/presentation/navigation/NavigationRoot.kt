@@ -27,14 +27,21 @@ fun NavigationRoot() {
             ) { backStackEntry ->
                 val arguments = backStackEntry.toRoute<Routes.Movies>()
                 MoviesScreen(
-                    genreUi = arguments.genre,
+                    selectedGenre = arguments.genre,
                     onFilterClick = {
-                        navController.navigate(Routes.Filter)
+                        navController.navigate(Routes.Filter(arguments.genre))
                     }
                 )
             }
-            composable<Routes.Filter> {
+            composable<Routes.Filter>(
+                typeMap = mapOf(
+                    typeOf<GenreUi>() to CustomNavType.Genre
+                )
+            ) { backStackEntry ->
+                val arguments = backStackEntry.toRoute<Routes.Movies>()
+
                 FilterScreen(
+                    selectedGenre = arguments.genre,
                     onGenreClicked = { genre ->
                         navController.navigate(Routes.Movies(genre))
 
