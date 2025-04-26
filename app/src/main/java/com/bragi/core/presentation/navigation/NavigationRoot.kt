@@ -7,34 +7,34 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import androidx.navigation.toRoute
-import com.bragi.movies.domain.model.GenreState
-import com.bragi.movies.presentation.FilterScreenRoot
-import com.bragi.movies.presentation.MoviesScreenRoot
-import com.bragi.movies.presentation.Routes
-import com.bragi.movies.presentation.model.CustomNavType
-import com.bragi.movies.presentation.model.GenreStateUiModel
+import com.bragi.features.movies.presentation.filter.FilterScreen
+import com.bragi.features.movies.presentation.MoviesScreen
+import com.bragi.features.movies.presentation.Routes
+import com.bragi.features.movies.presentation.model.CustomNavType
+import com.bragi.features.movies.presentation.model.GenreUi
+
 import kotlin.reflect.typeOf
 
 @Composable
 fun NavigationRoot() {
     val navController = rememberNavController()
     val navGraph = remember(navController) {
-        navController.createGraph(startDestination = Routes.Movies(GenreStateUiModel.All)) {
+        navController.createGraph(startDestination = Routes.Movies(GenreUi.All)) {
             composable<Routes.Movies>(
                 typeMap = mapOf(
-                    typeOf<GenreStateUiModel>() to CustomNavType.GenreState
+                    typeOf<GenreUi>() to CustomNavType.Genre
                 )
             ) { backStackEntry ->
                 val arguments = backStackEntry.toRoute<Routes.Movies>()
-                MoviesScreenRoot(
-                    selectedGenre = arguments.genre,
+                MoviesScreen(
+                    genreUi = arguments.genre,
                     onFilterClick = {
                         navController.navigate(Routes.Filter)
                     }
                 )
             }
             composable<Routes.Filter> {
-                FilterScreenRoot(
+                FilterScreen(
                     onGenreClicked = { genre ->
                         navController.navigate(Routes.Movies(genre))
 

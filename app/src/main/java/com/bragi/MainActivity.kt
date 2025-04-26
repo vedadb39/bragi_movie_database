@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.bragi.core.presentation.navigation.NavigationRoot
-import com.bragi.ui.theme.BragiMoviesDatabaseTheme
+import com.bragi.app.ui.theme.BragiMoviesDatabaseTheme
 import org.koin.androidx.compose.KoinAndroidContext
 
 class MainActivity : ComponentActivity() {

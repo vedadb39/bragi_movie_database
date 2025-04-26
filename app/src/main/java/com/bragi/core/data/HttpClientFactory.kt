@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 private const val MAX_NUMBER_OF_RETRIES = 3
-private const val RETRY_INTERVAL_MS = 30_000L
+private const val REQUEST_TIMEOUT_MS = 30_000L
 
 object HttpClientFactory {
     fun build(): HttpClient {
@@ -54,8 +54,7 @@ object HttpClientFactory {
                 }
             }
             install(HttpTimeout) {
-                requestTimeoutMillis = RETRY_INTERVAL_MS
-                connectTimeoutMillis = RETRY_INTERVAL_MS
+                requestTimeoutMillis = REQUEST_TIMEOUT_MS
             }
             install(HttpRequestRetry) {
                 retryOnException(MAX_NUMBER_OF_RETRIES, true)
