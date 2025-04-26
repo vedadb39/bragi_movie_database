@@ -39,6 +39,8 @@ import com.bragi.features.movies.domain.model.Movie
 import com.bragi.features.movies.domain.model.PosterImage
 import com.bragi.features.movies.presentation.filter.model.GenreUi
 import com.bragi.features.movies.presentation.model.MoviesUiState
+import com.bragi.features.movies.presentation.util.formatMoney
+import com.bragi.features.movies.presentation.util.round
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -113,7 +115,8 @@ private fun Movies(modifier: Modifier, movies: List<Movie>) {
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Pagination????
+        // I didn't have time to add pagination since Paging 3 library isn't quite good and it is confusing and I didn't have time to implement it
+        // Also I think they solution violates clean architecture since data models leaks in the presentation
         items(movies) { movie ->
             MovieItem(movie)
         }
@@ -150,17 +153,17 @@ private fun MovieItem(movie: Movie) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     maxLines = 1,
-                    text = "Rating: ${movie.rating}",
+                    text = "Rating: ${movie.rating.round(1)}",
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
                     maxLines = 1,
-                    text = "Revenue: ${movie.revenue}",
+                    text = "Revenue: ${movie.revenue.formatMoney()}",
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
                     maxLines = 1,
-                    text = "Budget: ${movie.budget}",
+                    text = "Budget: ${movie.budget.formatMoney()}",
                     style = MaterialTheme.typography.labelLarge
                 )
             }
