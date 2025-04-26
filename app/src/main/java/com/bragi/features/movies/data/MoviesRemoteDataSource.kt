@@ -8,9 +8,9 @@ import com.bragi.features.movies.data.model.GenreApiModel
 import com.bragi.features.movies.data.model.GenreResponseApiModel
 import com.bragi.features.movies.data.model.MovieApiModel
 import com.bragi.features.movies.data.model.MovieDetailsApiModel
-import com.bragi.features.movies.domain.model.Genre
-import com.bragi.features.movies.domain.model.Genre.All
-import com.bragi.features.movies.domain.model.Genre.Individual
+import com.bragi.features.movies.domain.filter.model.Genre
+import com.bragi.features.movies.domain.filter.model.Genre.All
+import com.bragi.features.movies.domain.filter.model.Genre.Individual
 import io.ktor.client.HttpClient
 
 class MoviesRemoteDataSource(

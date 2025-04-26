@@ -1,4 +1,4 @@
-package com.bragi.features.movies.presentation
+package com.bragi.features.movies.presentation.model
 
 import com.bragi.features.movies.domain.model.Movie
 

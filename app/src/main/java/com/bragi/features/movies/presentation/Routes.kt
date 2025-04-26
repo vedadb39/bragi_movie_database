@@ -1,6 +1,6 @@
 package com.bragi.features.movies.presentation
 
-import com.bragi.features.movies.presentation.model.GenreUi
+import com.bragi.features.movies.presentation.filter.model.GenreUi
 import kotlinx.serialization.Serializable
 
 sealed interface Routes {

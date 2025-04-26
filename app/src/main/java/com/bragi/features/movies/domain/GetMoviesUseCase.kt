@@ -5,7 +5,8 @@ import com.bragi.core.domain.Result
 import com.bragi.features.movies.domain.filter.model.Genre
 import com.bragi.features.movies.domain.model.Movie
 
-interface MoviesRepository {
-    suspend fun getMovies(genre: Genre): Result<List<Movie>, DataError.Network>
-    suspend fun getGenres(): Result<List<Genre>, DataError.Network>
+class GetMoviesUseCase(private val repository: MoviesRepository) {
+    suspend operator fun invoke(genre: Genre): Result<List<Movie>, DataError.Network> {
+        return repository.getMovies(genre)
+    }
 }

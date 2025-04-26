@@ -3,6 +3,7 @@ package com.bragi.features.movies.presentation.model
 import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavType
+import com.bragi.features.movies.presentation.filter.model.GenreUi
 import kotlinx.serialization.json.Json
 
 object CustomNavType {

@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bragi.core.domain.Result.Error
 import com.bragi.core.domain.Result.Success
-import com.bragi.features.movies.domain.MoviesRepository
-import com.bragi.features.movies.domain.model.Genre
-import com.bragi.features.movies.presentation.model.GenreUi
+import com.bragi.features.movies.domain.GetMoviesUseCase
+import com.bragi.features.movies.domain.filter.model.Genre
+import com.bragi.features.movies.presentation.filter.model.GenreUi
+import com.bragi.features.movies.presentation.model.MoviesUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class MoviesViewModel(
     private val genreUi: GenreUi,
-    private val moviesRepository: MoviesRepository
+    private val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MoviesUiState())
@@ -35,7 +36,7 @@ class MoviesViewModel(
             lastState.copy(isLoading = true)
         }
         viewModelScope.launch {
-            when (val result = moviesRepository.getMovies(genre = genreUi.toGenre())) {
+            when (val result = getMoviesUseCase(genre = genreUi.toGenre())) {
                 is Success -> _uiState.update { lastState ->
                     lastState.copy(movies = result.data)
                 }

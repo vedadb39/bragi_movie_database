@@ -7,12 +7,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import androidx.navigation.toRoute
-import com.bragi.features.movies.presentation.filter.FilterScreen
 import com.bragi.features.movies.presentation.MoviesScreen
 import com.bragi.features.movies.presentation.Routes
+import com.bragi.features.movies.presentation.filter.FilterScreen
+import com.bragi.features.movies.presentation.filter.model.GenreUi
 import com.bragi.features.movies.presentation.model.CustomNavType
-import com.bragi.features.movies.presentation.model.GenreUi
-
 import kotlin.reflect.typeOf
 
 @Composable
@@ -43,7 +42,11 @@ fun NavigationRoot() {
                 FilterScreen(
                     selectedGenre = arguments.genre,
                     onGenreClicked = { genre ->
-                        navController.navigate(Routes.Movies(genre))
+                        if (arguments.genre != genre) {
+                            navController.navigate(Routes.Movies(genre))
+                        } else {
+                            navController.popBackStack()
+                        }
 
                     }
                 )

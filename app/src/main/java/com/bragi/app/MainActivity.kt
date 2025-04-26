@@ -1,4 +1,4 @@
-package com.bragi
+package com.bragi.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

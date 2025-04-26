@@ -1,6 +1,4 @@
-package com.bragi.features.movies.presentation.filter
-
-import com.bragi.features.movies.presentation.model.GenreUi
+package com.bragi.features.movies.presentation.filter.model
 
 data class FiltersUiState(
     val isLoading: Boolean = true,

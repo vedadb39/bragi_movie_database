@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bragi.core.domain.Result.Error
 import com.bragi.core.domain.Result.Success
-import com.bragi.features.movies.domain.MoviesRepository
-import com.bragi.features.movies.domain.model.Genre
-import com.bragi.features.movies.presentation.model.GenreUi
+import com.bragi.features.movies.domain.filter.GetGenresUseCase
+import com.bragi.features.movies.domain.filter.model.Genre
+import com.bragi.features.movies.presentation.filter.model.FiltersUiState
+import com.bragi.features.movies.presentation.filter.model.GenreUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class FiltersViewModel(
     selectedGenre: GenreUi,
-    private val moviesRepository: MoviesRepository
+    private val getGenresUseCase: GetGenresUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FiltersUiState(selectedGenre = selectedGenre))
@@ -32,7 +33,7 @@ class FiltersViewModel(
 
     private fun fetchGenres() {
         viewModelScope.launch {
-            when (val result = moviesRepository.getGenres()) {
+            when (val result = getGenresUseCase()) {
                 is Success -> _uiState.update { lastState ->
                     lastState.copy(genres = result.data.map { it.toUi() })
                 }

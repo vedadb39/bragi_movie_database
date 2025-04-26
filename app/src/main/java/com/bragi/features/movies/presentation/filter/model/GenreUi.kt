@@ -1,4 +1,4 @@
-package com.bragi.features.movies.presentation.model
+package com.bragi.features.movies.presentation.filter.model
 
 import kotlinx.serialization.Serializable
 

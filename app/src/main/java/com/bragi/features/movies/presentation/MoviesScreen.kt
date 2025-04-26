@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,15 +15,20 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +37,8 @@ import coil3.compose.AsyncImage
 import com.bragi.R
 import com.bragi.features.movies.domain.model.Movie
 import com.bragi.features.movies.domain.model.PosterImage
-import com.bragi.features.movies.presentation.model.GenreUi
+import com.bragi.features.movies.presentation.filter.model.GenreUi
+import com.bragi.features.movies.presentation.model.MoviesUiState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -101,8 +108,10 @@ private fun Error() {
 @Composable
 private fun Movies(modifier: Modifier, movies: List<Movie>) {
     LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(2)
+        modifier = modifier.padding(vertical = 16.dp),
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Pagination????
         items(movies) { movie ->
@@ -113,43 +122,51 @@ private fun Movies(modifier: Modifier, movies: List<Movie>) {
 
 @Composable
 private fun MovieItem(movie: Movie) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        when (movie.posterImage) {
-            PosterImage.Unavailable -> {
-                Image(
-                    painter = painterResource(id = R.drawable.movie_placeholder),
-                    contentDescription = null
+    Card(
+        colors = CardDefaults.cardColors(containerColor = White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            when (movie.posterImage) {
+                PosterImage.Unavailable -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.movie_placeholder),
+                        contentDescription = null
+                    )
+                }
+
+                is PosterImage.Url -> {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop,
+                        model = movie.posterImage.url,
+                        contentDescription = null,
+                        placeholder = painterResource(R.drawable.movie_placeholder)
+                    )
+                }
+            }
+            Column(modifier = Modifier.padding(8.dp)) {
+                Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    maxLines = 1,
+                    text = "Rating: ${movie.rating}",
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    maxLines = 1,
+                    text = "Revenue: ${movie.revenue}",
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    maxLines = 1,
+                    text = "Budget: ${movie.budget}",
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
 
-            is PosterImage.Url -> {
-                AsyncImage(
-                    model = movie.posterImage.url,
-                    contentDescription = null,
-                    placeholder = painterResource(R.drawable.movie_placeholder)
-                )
-            }
         }
-
-        Text(text = movie.title)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Rating: ${movie.rating}")
-        Text(text = "Revenue: ${movie.revenue}")
-        Text(text = "Budget: ${movie.budget}")
-
     }
-}
-
-@Preview
-@Composable
-fun MoviesScreenLoadingPreview() {
-    Content(
-        uiState = MoviesUiState(
-            isLoading = true,
-            error = null,
-            movies = emptyList()
-        )
-    )
 }
 
 @Preview
@@ -169,18 +186,6 @@ fun MoviesScreenPreview() {
                     budget = 500000
                 )
             }
-        )
-    )
-}
-
-@Preview
-@Composable
-fun MoviesScreenErrorPreview() {
-    Content(
-        uiState = MoviesUiState(
-            isLoading = false,
-            error = "Something went wrong",
-            movies = emptyList()
         )
     )
 }

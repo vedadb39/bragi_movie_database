@@ -9,9 +9,8 @@ import com.bragi.features.movies.data.model.GenreApiModel
 import com.bragi.features.movies.data.model.MovieApiModel
 import com.bragi.features.movies.data.model.MovieDetailsApiModel
 import com.bragi.features.movies.domain.MoviesRepository
-import com.bragi.features.movies.domain.model.Genre
-import com.bragi.features.movies.domain.model.Genre.All
-import com.bragi.features.movies.domain.model.Genre.Individual
+import com.bragi.features.movies.domain.filter.model.Genre
+import com.bragi.features.movies.domain.filter.model.Genre.Individual
 import com.bragi.features.movies.domain.model.Movie
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -50,9 +49,7 @@ class MoviesDataRepository(
 
     override suspend fun getGenres(): Result<List<Genre>, DataError.Network> {
         return try {
-            moviesRemoteSource.getGenres().map { genres ->
-                listOf(All) + genres.map { it.toGenre() }
-            }
+            moviesRemoteSource.getGenres().map { genres -> genres.map { it.toGenre() } }
         } catch (e: Exception) {
             Error(DataError.Network.UNKNOWN)
         }

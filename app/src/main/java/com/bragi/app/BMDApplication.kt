@@ -1,8 +1,10 @@
-package com.bragi
+package com.bragi.app
 
 import android.app.Application
+import com.bragi.BuildConfig
 import com.bragi.core.data.di.networkModule
 import com.bragi.features.movies.data.di.moviesDataModule
+import com.bragi.features.movies.domain.di.moviesDomainModule
 import com.bragi.features.movies.presentation.di.moviesPresentationModule
 
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +27,8 @@ class BMDApplication : Application() {
             modules(
                 networkModule,
                 moviesDataModule,
-                moviesPresentationModule
+                moviesPresentationModule,
+                moviesDomainModule
             )
         }
     }

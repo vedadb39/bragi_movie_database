@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,7 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bragi.R
-import com.bragi.features.movies.presentation.model.GenreUi
+import com.bragi.features.movies.presentation.filter.model.FiltersUiState
+import com.bragi.features.movies.presentation.filter.model.GenreUi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -93,18 +95,31 @@ private fun Genres(
     selectedGenre: GenreUi,
     onGenreClicked: (GenreUi) -> Unit
 ) {
-    FlowRow(
+
+    Column(
         modifier = modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalArrangement = Arrangement.Center
-    ) {
-        repeat(genres.size) { index ->
-            GenreItem(
-                genre = genres[index],
-                selectedGenre = selectedGenre,
-                onGenreClicked = { onGenreClicked(it) })
+            .fillMaxSize()
+            .padding(all = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
+    {
+        Text(
+            "Please select a genre",
+            style = MaterialTheme.typography.titleLarge,
+        )
+        FlowRow(
+            modifier = modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top
+        ) {
+            repeat(genres.size) { index ->
+                GenreItem(
+                    genre = genres[index],
+                    selectedGenre = selectedGenre,
+                    onGenreClicked = { onGenreClicked(it) })
+            }
         }
     }
 }
@@ -135,9 +150,12 @@ private fun GenreItem(
 fun FilterScreenPreview() {
     Content(
         uiState = FiltersUiState(
+            isLoading = false,
             genres = listOf(
                 GenreUi.All,
-                GenreUi.Individual(1, "Action")
+                GenreUi.Individual(1, "Action"),
+                GenreUi.Individual(2, "Comedy"),
+                GenreUi.Individual(3, "Drama")
             ),
             selectedGenre = GenreUi.All
         ),
