@@ -50,9 +50,6 @@ suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<
 }
 
 fun constructRoute(route: String): String {
-    return when {
-        route.contains(BuildConfig.BASE_URL) -> route
-        route.startsWith("/") -> BuildConfig.BASE_URL + route
-        else -> BuildConfig.BASE_URL + "/$route"
-    }
+    return BuildConfig.BASE_URL + "/$route" + "?api_key=" + BuildConfig.API_KEY
 }
+

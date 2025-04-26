@@ -42,17 +42,7 @@ object HttpClientFactory {
             defaultRequest {
                 contentType(ContentType.Application.Json)
             }
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        BearerTokens(
-                            // Need to move this to local.properties
-                            accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhN2NiODQwNDY4MDlkNmJlMjNhMzc5MDAwMDkzZWUyNSIsIm5iZiI6MTczNzgxMjM1My41MTUsInN1YiI6IjY3OTRlOTgxNTc5NzVmMWIwYjE4OGRiOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XXFUPbvsWu0PhKNRxDeURRmLbHKCx56EibmGy_g4sIE",
-                            refreshToken = null
-                        )
-                    }
-                }
-            }
+
             install(HttpTimeout) {
                 requestTimeoutMillis = REQUEST_TIMEOUT_MS
             }
