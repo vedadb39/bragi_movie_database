@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MoviesViewModel(
-    private val genreUi: GenreUi,
+    private val selectedGenre: GenreUi,
     private val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
 
@@ -32,11 +32,9 @@ class MoviesViewModel(
         )
 
     private fun fetchMovies() {
-        _uiState.update { lastState ->
-            lastState.copy(isLoading = true)
-        }
         viewModelScope.launch {
-            when (val result = getMoviesUseCase(genre = genreUi.toGenre())) {
+            _uiState.update { lastState -> lastState.copy(isLoading = true) }
+            when (val result = getMoviesUseCase(genre = selectedGenre.toGenre())) {
                 is Success -> _uiState.update { lastState ->
                     lastState.copy(movies = result.data)
                 }
@@ -45,9 +43,7 @@ class MoviesViewModel(
                     lastState.copy(error = "There was an error with the connection")
                 }
             }
-            _uiState.update { lastState ->
-                lastState.copy(isLoading = false)
-            }
+            _uiState.update { lastState -> lastState.copy(isLoading = false) }
         }
     }
 

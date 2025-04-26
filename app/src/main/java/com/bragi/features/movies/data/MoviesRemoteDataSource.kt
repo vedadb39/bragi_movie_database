@@ -8,6 +8,7 @@ import com.bragi.features.movies.data.model.GenreApiModel
 import com.bragi.features.movies.data.model.GenreResponseApiModel
 import com.bragi.features.movies.data.model.MovieApiModel
 import com.bragi.features.movies.data.model.MovieDetailsApiModel
+import com.bragi.features.movies.data.model.MovieResponseApiModel
 import com.bragi.features.movies.domain.filter.model.Genre
 import com.bragi.features.movies.domain.filter.model.Genre.All
 import com.bragi.features.movies.domain.filter.model.Genre.Individual
@@ -17,7 +18,7 @@ class MoviesRemoteDataSource(
     private val httpClient: HttpClient
 ) : MoviesRemoteSource {
     override suspend fun getMovies(genre: Genre): Result<List<MovieApiModel>, DataError.Network> {
-        return httpClient.get<com.bragi.features.movies.data.model.MovieResponseApiModel>(
+        return httpClient.get<MovieResponseApiModel>(
             route = "discover/movie",
             queryParameters = queryParameters(genre)
         ).map { response ->

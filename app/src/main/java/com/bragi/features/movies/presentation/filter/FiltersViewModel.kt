@@ -33,6 +33,7 @@ class FiltersViewModel(
 
     private fun fetchGenres() {
         viewModelScope.launch {
+            _uiState.update { lastState -> lastState.copy(isLoading = true) }
             when (val result = getGenresUseCase()) {
                 is Success -> _uiState.update { lastState ->
                     lastState.copy(genres = result.data.map { it.toUi() })
@@ -42,7 +43,7 @@ class FiltersViewModel(
                     lastState.copy(error = result.error.name)
                 }
             }
-            _uiState.update { it.copy(isLoading = false) }
+            _uiState.update { lastState -> lastState.copy(isLoading = false) }
         }
     }
 

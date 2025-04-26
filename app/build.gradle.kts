@@ -29,6 +29,11 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3\"")
+            buildConfigField(
+                "String",
+                "POSTER_BASE_URL",
+                "\"https://media.themoviedb.org/t/p/w500_and_h282_face\""
+            )
 
         }
         release {
@@ -38,6 +43,11 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3\"")
+            buildConfigField(
+                "String",
+                "POSTER_BASE_URL",
+                "\"https://media.themoviedb.org/t/p/w500_and_h282_face\""
+            )
         }
     }
     compileOptions {
@@ -83,4 +93,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(kotlin("test"))
 }
