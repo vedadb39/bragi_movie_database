@@ -1,7 +1,9 @@
 package com.bragi.core.presentation.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -38,16 +40,19 @@ fun NavigationRoot() {
                 )
             ) { backStackEntry ->
                 val arguments = backStackEntry.toRoute<Routes.Movies>()
-
                 FilterScreen(
                     selectedGenre = arguments.genre,
                     onGenreClicked = { genre ->
                         if (arguments.genre != genre) {
-                            navController.navigate(Routes.Movies(genre))
+                            navController.navigate(Routes.Movies(genre)) {
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         } else {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }
-
                     }
                 )
             }
